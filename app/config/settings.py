@@ -106,7 +106,8 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [APPS_DIR / "static"]
+STATICFILES_DIR = APPS_DIR / "static"
+STATICFILES_DIRS = [STATICFILES_DIR] if STATICFILES_DIR.exists() else []
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
