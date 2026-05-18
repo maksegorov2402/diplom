@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
-from django.db.models import Count, F, Q, Sum, Value, DecimalField
+from django.db.models import Count, F, Q, Sum
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.views.generic import TemplateView
@@ -132,6 +132,8 @@ class LowStockReportView(BaseReportView):
     filename = "low-stock-report.xlsx"
 
     def get(self, request, *args, **kwargs):
+        from django.db.models import DecimalField, Value
+
         zero_decimal = Value(Decimal("0"), output_field=DecimalField(max_digits=12, decimal_places=2))
         queryset = Product.objects.annotate(total_stock=Coalesce(Sum("stocks__quantity"), zero_decimal)).filter(total_stock__lt=F("min_quantity"))
         headers = ["Товар", "Артикул", "Текущий остаток", "Мин. остаток", "Нужно докупить"]
