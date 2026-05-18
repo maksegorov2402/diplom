@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="h3 mb-4">Отчеты</h1>
+<div class="list-group">
+    <a class="list-group-item list-group-item-action" href="{% url 'report-stock' %}">Отчет по остаткам</a>
+    <a class="list-group-item list-group-item-action" href="{% url 'report-receipts' %}">Отчет по поступлениям</a>
+    <a class="list-group-item list-group-item-action" href="{% url 'report-shipments' %}">Отчет по отгрузкам</a>
+    <a class="list-group-item list-group-item-action" href="{% url 'report-employees' %}">Отчет по сотрудникам</a>
+    <a class="list-group-item list-group-item-action" href="{% url 'report-low-stock' %}">Товары ниже минимального остатка</a>
+</div>
+{% endblock %}

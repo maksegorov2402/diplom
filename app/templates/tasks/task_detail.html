@@ -1,0 +1,4 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row g-4"><div class="col-lg-7"><div class="card"><div class="card-body"><h1 class="h4">{{ task.title }}</h1><p><strong>Тип:</strong> {{ task.get_task_type_display }}</p><p><strong>Исполнитель:</strong> {{ task.assigned_to }}</p><p><strong>Создал:</strong> {{ task.created_by }}</p><p><strong>Статус:</strong> {{ task.get_status_display }}</p><p><strong>Приоритет:</strong> {{ task.get_priority_display }}</p><p><strong>Срок:</strong> {{ task.due_date|default:'—' }}</p><p><strong>Описание:</strong> {{ task.description|default:'—' }}</p><p><strong>Комментарий:</strong> {{ task.comment|default:'—' }}</p></div></div></div><div class="col-lg-5"><div class="card"><div class="card-body"><h2 class="h5 mb-3">Обновить статус</h2><form method="post">{% csrf_token %}{{ status_form.as_p }}<button class="btn btn-primary">Сохранить</button></form></div></div></div></div>
+{% endblock %}

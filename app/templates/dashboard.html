@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="h3 mb-4">Панель управления</h1>
+<div class="row g-3 mb-4">
+    <div class="col-md-3"><div class="card"><div class="card-body"><div class="text-muted">Товаров</div><div class="display-6">{{ product_count }}</div></div></div></div>
+    <div class="col-md-3"><div class="card border-warning"><div class="card-body"><div class="text-muted">Ниже минимума</div><div class="display-6">{{ low_stock_count }}</div></div></div></div>
+    <div class="col-md-3"><div class="card"><div class="card-body"><div class="text-muted">Активные задачи</div><div class="display-6">{{ active_tasks_count }}</div></div></div></div>
+    <div class="col-md-3"><div class="card border-danger"><div class="card-body"><div class="text-muted">Просроченные задачи</div><div class="display-6">{{ overdue_tasks_count }}</div></div></div></div>
+</div>
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card"><div class="card-header">Последние операции</div><div class="card-body"><ul class="list-group list-group-flush">{% for item in recent_operations %}<li class="list-group-item"><strong>{{ item.get_operation_type_display }}</strong><br><small>{{ item.description }}</small></li>{% empty %}<li class="list-group-item">Нет операций.</li>{% endfor %}</ul></div></div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card"><div class="card-header">Последние поступления</div><div class="card-body"><ul class="list-group list-group-flush">{% for item in recent_receipts %}<li class="list-group-item">{{ item.receipt_number }} — {{ item.supplier }}</li>{% empty %}<li class="list-group-item">Нет поступлений.</li>{% endfor %}</ul></div></div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card"><div class="card-header">Последние отгрузки</div><div class="card-body"><ul class="list-group list-group-flush">{% for item in recent_shipments %}<li class="list-group-item">{{ item.shipment_number }} — {{ item.client }}</li>{% empty %}<li class="list-group-item">Нет отгрузок.</li>{% endfor %}</ul></div></div>
+    </div>
+</div>
+{% endblock %}

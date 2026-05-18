@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="h3 mb-3">Поступление {{ receipt.receipt_number }}</h1>
+<div class="card mb-3"><div class="card-body"><p><strong>Дата:</strong> {{ receipt.receipt_date }}</p><p><strong>Поставщик:</strong> {{ receipt.supplier }}</p><p><strong>Сотрудник:</strong> {{ receipt.user }}</p><p><strong>Комментарий:</strong> {{ receipt.comment|default:'—' }}</p></div></div>
+<table class="table table-striped bg-white"><thead><tr><th>Товар</th><th>Зона</th><th>Количество</th><th>Цена</th></tr></thead><tbody>{% for item in receipt.items.all %}<tr><td>{{ item.product }}</td><td>{{ item.location }}</td><td>{{ item.quantity }}</td><td>{{ item.purchase_price }}</td></tr>{% endfor %}</tbody></table>
+{% endblock %}

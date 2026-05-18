@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="h3 mb-3">Новое поступление</h1>
+<form method="post">
+    {% csrf_token %}
+    <div class="card mb-3"><div class="card-body">{{ form.as_p }}</div></div>
+    <div class="card mb-3"><div class="card-header">Позиции</div><div class="card-body">{{ item_formset.management_form }}{% for item_form in item_formset %}<div class="border rounded p-3 mb-3">{{ item_form.as_p }}</div>{% endfor %}</div></div>
+    <button class="btn btn-primary">Сохранить</button>
+</form>
+{% endblock %}
