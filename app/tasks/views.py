@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView
 
 from app.accounts.constants import ROLE_MANAGER
-from app.accounts.mixins import RoleRequiredMixin, user_has_role
+from app.accounts.mixins import ModelFormTitleMixin, RoleRequiredMixin, user_has_role
 from app.logs.services import log_operation
 from app.tasks.forms import WarehouseTaskForm, WarehouseTaskStatusForm
 from app.tasks.models import WarehouseTask
@@ -30,7 +30,7 @@ class MyTaskListView(LoginRequiredMixin, ListView):
         return WarehouseTask.objects.select_related("assigned_to", "created_by").filter(assigned_to=self.request.user).order_by("due_date", "-created_at")
 
 
-class TaskCreateView(LoginRequiredMixin, RoleRequiredMixin, CreateView):
+class TaskCreateView(LoginRequiredMixin, RoleRequiredMixin, ModelFormTitleMixin, CreateView):
     allowed_roles = (ROLE_MANAGER,)
     model = WarehouseTask
     form_class = WarehouseTaskForm

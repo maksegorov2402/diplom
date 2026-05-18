@@ -18,5 +18,19 @@ class RoleRequiredMixin(UserPassesTestMixin):
         return user_has_role(self.request.user, *self.allowed_roles)
 
 
+class ModelFormTitleMixin:
+    form_title: str | None = None
+
+    def get_form_title(self) -> str:
+        if self.form_title:
+            return self.form_title
+        return self.model._meta.verbose_name
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form_title"] = self.get_form_title()
+        return context
+
+
 class ManagerRequiredMixin(RoleRequiredMixin):
     allowed_roles = (ROLE_MANAGER,)

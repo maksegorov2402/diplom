@@ -6,7 +6,7 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView
 
 from app.accounts.constants import ROLE_MANAGER, ROLE_WAREHOUSE_WORKER
-from app.accounts.mixins import RoleRequiredMixin
+from app.accounts.mixins import ModelFormTitleMixin, RoleRequiredMixin
 from app.documents.forms import (
     ClientForm,
     ReceiptFilterForm,
@@ -198,7 +198,7 @@ class MovementListView(LoginRequiredMixin, ListView):
         return StockMovement.objects.select_related("product", "from_location", "to_location", "user")
 
 
-class MovementCreateView(LoginRequiredMixin, RoleRequiredMixin, CreateView):
+class MovementCreateView(LoginRequiredMixin, RoleRequiredMixin, ModelFormTitleMixin, CreateView):
     allowed_roles = (ROLE_MANAGER, ROLE_WAREHOUSE_WORKER)
     model = StockMovement
     form_class = StockMovementForm
@@ -229,7 +229,7 @@ class WriteOffListView(LoginRequiredMixin, ListView):
         return WriteOff.objects.select_related("product", "location", "user")
 
 
-class WriteOffCreateView(LoginRequiredMixin, RoleRequiredMixin, CreateView):
+class WriteOffCreateView(LoginRequiredMixin, RoleRequiredMixin, ModelFormTitleMixin, CreateView):
     allowed_roles = (ROLE_MANAGER, ROLE_WAREHOUSE_WORKER)
     model = WriteOff
     form_class = WriteOffForm

@@ -2,7 +2,7 @@
 {% block content %}
 <div class="card shadow-sm">
     <div class="card-body">
-        <h1 class="h4 mb-3">{{ view.model._meta.verbose_name|capfirst }}</h1>
+        <h1 class="h4 mb-3">{{ form_title|capfirst }}</h1>
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}

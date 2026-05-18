@@ -6,7 +6,7 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, UpdateView, View
 
 from app.accounts.constants import ROLE_MANAGER
-from app.accounts.mixins import RoleRequiredMixin
+from app.accounts.mixins import ModelFormTitleMixin, RoleRequiredMixin
 from app.logs.services import log_operation
 from app.products.forms import CategoryForm, ProductFilterForm, ProductForm
 from app.products.models import Category, Product
@@ -57,7 +57,7 @@ class ProductListView(LoginRequiredMixin, ListView):
         return context
 
 
-class ProductCreateView(LoginRequiredMixin, RoleRequiredMixin, CreateView):
+class ProductCreateView(LoginRequiredMixin, RoleRequiredMixin, ModelFormTitleMixin, CreateView):
     allowed_roles = (ROLE_MANAGER,)
     model = Product
     form_class = ProductForm
@@ -71,7 +71,7 @@ class ProductCreateView(LoginRequiredMixin, RoleRequiredMixin, CreateView):
         return response
 
 
-class ProductUpdateView(LoginRequiredMixin, RoleRequiredMixin, UpdateView):
+class ProductUpdateView(LoginRequiredMixin, RoleRequiredMixin, ModelFormTitleMixin, UpdateView):
     allowed_roles = (ROLE_MANAGER,)
     model = Product
     form_class = ProductForm
