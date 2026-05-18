@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="h3 mb-3">Сотрудники</h1>
+<table class="table table-striped bg-white shadow-sm"><thead><tr><th>Пользователь</th><th>Операции</th><th>Назначено задач</th><th>Выполнено задач</th></tr></thead><tbody>{% for item in staff_list %}<tr><td>{{ item.username }}</td><td>{{ item.operation_count }}</td><td>{{ item.assigned_tasks_count }}</td><td>{{ item.completed_tasks_count }}</td></tr>{% empty %}<tr><td colspan="4" class="text-center">Сотрудников нет.</td></tr>{% endfor %}</tbody></table>
+{% endblock %}

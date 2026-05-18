@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="h3 mb-3">Остатки</h1>
+<form method="get" class="card card-body mb-3">{{ filter_form.as_p }}<div><button class="btn btn-outline-secondary">Применить</button></div></form>
+<table class="table table-striped bg-white shadow-sm">
+<thead><tr><th>Товар</th><th>Артикул</th><th>Категория</th><th>Зона</th><th>Количество</th><th>Мин. остаток</th></tr></thead>
+<tbody>
+{% for stock in stocks %}
+<tr class="{% if stock.below_minimum %}table-warning{% endif %}"><td>{{ stock.product.name }}</td><td>{{ stock.product.article }}</td><td>{{ stock.product.category }}</td><td>{{ stock.location }}</td><td>{{ stock.quantity }}</td><td>{{ stock.product.min_quantity }}</td></tr>
+{% empty %}
+<tr><td colspan="6" class="text-center">Остатки не найдены.</td></tr>
+{% endfor %}
+</tbody></table>
+{% endblock %}

@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3"><h1 class="h3">Списания</h1><a class="btn btn-primary" href="{% url 'writeoff-create' %}">Создать</a></div>
+<table class="table table-striped bg-white shadow-sm"><thead><tr><th>Дата</th><th>Товар</th><th>Зона</th><th>Количество</th><th>Причина</th><th>Сотрудник</th></tr></thead><tbody>{% for item in write_offs %}<tr><td>{{ item.write_off_date }}</td><td>{{ item.product }}</td><td>{{ item.location }}</td><td>{{ item.quantity }}</td><td>{{ item.get_reason_display }}</td><td>{{ item.user }}</td></tr>{% empty %}<tr><td colspan="6" class="text-center">Списаний нет.</td></tr>{% endfor %}</tbody></table>
+{% endblock %}
