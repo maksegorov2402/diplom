@@ -57,10 +57,6 @@
         {% if user.is_authenticated %}
         <div class="d-flex align-items-center gap-3">
             <span class="navbar-text text-white">{{ user.username }}</span>
-            <form method="post" action="{% url 'logout' %}" class="d-inline">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-outline-light btn-sm">Выйти</button>
-            </form>
         </div>
         {% endif %}
     </div>
@@ -82,6 +78,10 @@
     <a class="btn btn-dark" href="{% url 'staff-list' %}">Сотрудники</a>
     <a class="btn btn-dark" href="{% url 'reports-index' %}">Отчеты</a>
     <a class="btn btn-dark" href="{% url 'operation-log-list' %}">Журнал</a>
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-dark w-100">Выйти</button>
+    </form>
 </nav>
 {% endif %}
 <div class="container page-content{% if user.is_authenticated %} authenticated{% endif %} pb-5">
