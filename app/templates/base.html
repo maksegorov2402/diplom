@@ -73,10 +73,14 @@
     <a class="btn btn-dark" href="{% url 'writeoff-list' %}">Списания</a>
     <a class="btn btn-dark" href="{% url 'supplier-list' %}">Поставщики</a>
     <a class="btn btn-dark" href="{% url 'client-list' %}">Клиенты</a>
+    {% if show_tasks_nav %}
     <a class="btn btn-dark" href="{% url 'task-list' %}">Задачи</a>
     <a class="btn btn-dark" href="{% url 'my-tasks' %}">Мои задачи</a>
+    {% endif %}
     <a class="btn btn-dark" href="{% url 'staff-list' %}">Сотрудники</a>
+    {% if show_reports_nav %}
     <a class="btn btn-dark" href="{% url 'reports-index' %}">Отчеты</a>
+    {% endif %}
     <a class="btn btn-dark" href="{% url 'operation-log-list' %}">Журнал</a>
     <form method="post" action="{% url 'logout' %}">
         {% csrf_token %}

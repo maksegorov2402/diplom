@@ -6,7 +6,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from app.accounts.constants import ROLE_MANAGER
+from app.accounts.constants import ROLE_ADMIN, ROLE_MANAGER, ROLE_WAREHOUSE_WORKER
 from app.tasks.models import WarehouseTask
 
 
@@ -39,10 +39,17 @@ class WarehouseTaskModelTests(TestCase):
 
 class TaskUpdateViewTests(TestCase):
     def setUp(self):
+        self.admin_group = Group.objects.create(name=ROLE_ADMIN)
         self.manager_group = Group.objects.create(name=ROLE_MANAGER)
+        self.worker_group = Group.objects.create(name=ROLE_WAREHOUSE_WORKER)
+
+        self.admin = User.objects.create_user(username="admin_role", password="pass", is_staff=True)
+        self.admin.groups.add(self.admin_group)
+
         self.manager = User.objects.create_user(username="manager", password="pass", is_staff=True)
         self.manager.groups.add(self.manager_group)
         self.worker = User.objects.create_user(username="worker", password="pass", is_staff=True)
+        self.worker.groups.add(self.worker_group)
         self.task = WarehouseTask.objects.create(
             title="Старая задача",
             task_type=WarehouseTask.TYPE_INVENTORY,
@@ -58,6 +65,13 @@ class TaskUpdateViewTests(TestCase):
         detail_response = self.client.get(reverse("task-detail", args=[self.task.pk]))
         self.assertContains(list_response, reverse("task-update", args=[self.task.pk]))
         self.assertContains(detail_response, reverse("task-update", args=[self.task.pk]))
+
+    def test_admin_can_access_task_pages(self):
+        self.client.force_login(self.admin)
+        list_response = self.client.get(reverse("task-list"))
+        detail_response = self.client.get(reverse("task-detail", args=[self.task.pk]))
+        self.assertEqual(list_response.status_code, 200)
+        self.assertEqual(detail_response.status_code, 200)
 
     def test_manager_can_update_task(self):
         self.client.force_login(self.manager)
@@ -78,9 +92,9 @@ class TaskUpdateViewTests(TestCase):
         self.task.refresh_from_db()
         self.assertEqual(self.task.title, "Новая задача")
 
-    def test_worker_does_not_see_edit_button(self):
+    def test_worker_cannot_access_task_pages(self):
         self.client.force_login(self.worker)
         list_response = self.client.get(reverse("my-tasks"))
         detail_response = self.client.get(reverse("task-detail", args=[self.task.pk]))
-        self.assertNotContains(list_response, "Редактирование")
-        self.assertNotContains(detail_response, reverse("task-update", args=[self.task.pk]))
+        self.assertEqual(list_response.status_code, 403)
+        self.assertEqual(detail_response.status_code, 403)

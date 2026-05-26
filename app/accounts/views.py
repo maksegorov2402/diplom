@@ -6,8 +6,7 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.generic import ListView, RedirectView, TemplateView
 
-from app.accounts.constants import ROLE_MANAGER
-from app.accounts.mixins import RoleRequiredMixin
+from app.accounts.mixins import MANAGEMENT_ROLES, RoleRequiredMixin
 from app.documents.models import Receipt, Shipment
 from app.logs.models import OperationLog
 from app.products.models import Product
@@ -50,7 +49,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 
 
 class StaffListView(LoginRequiredMixin, RoleRequiredMixin, ListView):
-    allowed_roles = (ROLE_MANAGER,)
+    allowed_roles = MANAGEMENT_ROLES
     model = User
     template_name = "accounts/staff_list.html"
     context_object_name = "staff_list"

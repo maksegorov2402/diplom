@@ -1,6 +1,8 @@
 from django.contrib.auth.mixins import UserPassesTestMixin
 
-from app.accounts.constants import ROLE_MANAGER
+from app.accounts.constants import ROLE_ADMIN, ROLE_MANAGER
+
+MANAGEMENT_ROLES = (ROLE_ADMIN, ROLE_MANAGER)
 
 
 def user_has_role(user, *roles: str) -> bool:
@@ -9,6 +11,10 @@ def user_has_role(user, *roles: str) -> bool:
     if user.is_superuser:
         return True
     return user.groups.filter(name__in=roles).exists()
+
+
+def user_can_manage_system(user) -> bool:
+    return user_has_role(user, *MANAGEMENT_ROLES)
 
 
 class RoleRequiredMixin(UserPassesTestMixin):
@@ -33,4 +39,4 @@ class ModelFormTitleMixin:
 
 
 class ManagerRequiredMixin(RoleRequiredMixin):
-    allowed_roles = (ROLE_MANAGER,)
+    allowed_roles = MANAGEMENT_ROLES

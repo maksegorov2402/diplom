@@ -5,15 +5,14 @@ from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, UpdateView, View
 
-from app.accounts.constants import ROLE_MANAGER
-from app.accounts.mixins import ModelFormTitleMixin, RoleRequiredMixin
+from app.accounts.mixins import MANAGEMENT_ROLES, ModelFormTitleMixin, RoleRequiredMixin
 from app.logs.services import log_operation
 from app.products.forms import CategoryForm, ProductFilterForm, ProductForm
 from app.products.models import Category, Product
 
 
 class CategoryListCreateView(LoginRequiredMixin, RoleRequiredMixin, ListView):
-    allowed_roles = (ROLE_MANAGER,)
+    allowed_roles = MANAGEMENT_ROLES
     model = Category
     template_name = "products/category_list.html"
     context_object_name = "categories"
@@ -35,7 +34,7 @@ class CategoryListCreateView(LoginRequiredMixin, RoleRequiredMixin, ListView):
 
 
 class CategoryUpdateView(LoginRequiredMixin, RoleRequiredMixin, ModelFormTitleMixin, UpdateView):
-    allowed_roles = (ROLE_MANAGER,)
+    allowed_roles = MANAGEMENT_ROLES
     model = Category
     form_class = CategoryForm
     template_name = "generic/form.html"
@@ -71,7 +70,7 @@ class ProductListView(LoginRequiredMixin, ListView):
 
 
 class ProductCreateView(LoginRequiredMixin, RoleRequiredMixin, ModelFormTitleMixin, CreateView):
-    allowed_roles = (ROLE_MANAGER,)
+    allowed_roles = MANAGEMENT_ROLES
     model = Product
     form_class = ProductForm
     template_name = "generic/form.html"
@@ -85,7 +84,7 @@ class ProductCreateView(LoginRequiredMixin, RoleRequiredMixin, ModelFormTitleMix
 
 
 class ProductUpdateView(LoginRequiredMixin, RoleRequiredMixin, ModelFormTitleMixin, UpdateView):
-    allowed_roles = (ROLE_MANAGER,)
+    allowed_roles = MANAGEMENT_ROLES
     model = Product
     form_class = ProductForm
     template_name = "generic/form.html"
@@ -97,7 +96,7 @@ class ProductUpdateView(LoginRequiredMixin, RoleRequiredMixin, ModelFormTitleMix
 
 
 class ProductToggleActiveView(LoginRequiredMixin, RoleRequiredMixin, View):
-    allowed_roles = (ROLE_MANAGER,)
+    allowed_roles = MANAGEMENT_ROLES
 
     def post(self, request, *args, **kwargs):
         product = get_object_or_404(Product, pk=kwargs["pk"])
