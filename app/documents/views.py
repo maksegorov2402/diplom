@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DetailView, ListView
+from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
 from app.accounts.constants import ROLE_MANAGER, ROLE_WAREHOUSE_WORKER
 from app.accounts.mixins import ModelFormTitleMixin, RoleRequiredMixin
@@ -46,6 +46,19 @@ class SupplierListCreateView(LoginRequiredMixin, RoleRequiredMixin, ListView):
         return self.render_to_response(self.get_context_data(form=form))
 
 
+class SupplierUpdateView(LoginRequiredMixin, RoleRequiredMixin, ModelFormTitleMixin, UpdateView):
+    allowed_roles = (ROLE_MANAGER,)
+    model = Supplier
+    form_class = SupplierForm
+    template_name = "generic/form.html"
+    success_url = reverse_lazy("supplier-list")
+    form_title = "редактирование поставщика"
+
+    def form_valid(self, form):
+        messages.success(self.request, "Поставщик обновлен.")
+        return super().form_valid(form)
+
+
 class ClientListCreateView(LoginRequiredMixin, RoleRequiredMixin, ListView):
     allowed_roles = (ROLE_MANAGER,)
     model = Client
@@ -65,6 +78,19 @@ class ClientListCreateView(LoginRequiredMixin, RoleRequiredMixin, ListView):
             return redirect("client-list")
         self.object_list = self.get_queryset()
         return self.render_to_response(self.get_context_data(form=form))
+
+
+class ClientUpdateView(LoginRequiredMixin, RoleRequiredMixin, ModelFormTitleMixin, UpdateView):
+    allowed_roles = (ROLE_MANAGER,)
+    model = Client
+    form_class = ClientForm
+    template_name = "generic/form.html"
+    success_url = reverse_lazy("client-list")
+    form_title = "редактирование клиента"
+
+    def form_valid(self, form):
+        messages.success(self.request, "Клиент обновлен.")
+        return super().form_valid(form)
 
 
 class ReceiptListView(LoginRequiredMixin, ListView):

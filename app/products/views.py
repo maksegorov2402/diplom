@@ -34,6 +34,19 @@ class CategoryListCreateView(LoginRequiredMixin, RoleRequiredMixin, ListView):
         return self.render_to_response(self.get_context_data(form=form))
 
 
+class CategoryUpdateView(LoginRequiredMixin, RoleRequiredMixin, ModelFormTitleMixin, UpdateView):
+    allowed_roles = (ROLE_MANAGER,)
+    model = Category
+    form_class = CategoryForm
+    template_name = "generic/form.html"
+    success_url = reverse_lazy("categories")
+    form_title = "редактирование категории"
+
+    def form_valid(self, form):
+        messages.success(self.request, "Категория обновлена.")
+        return super().form_valid(form)
+
+
 class ProductListView(LoginRequiredMixin, ListView):
     model = Product
     template_name = "products/product_list.html"

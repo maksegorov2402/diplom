@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DetailView, ListView
+from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
 from app.accounts.constants import ROLE_MANAGER
 from app.accounts.mixins import ModelFormTitleMixin, RoleRequiredMixin, user_has_role
@@ -20,6 +20,11 @@ class TaskListView(LoginRequiredMixin, RoleRequiredMixin, ListView):
     def get_queryset(self):
         return WarehouseTask.objects.select_related("assigned_to", "created_by").order_by("due_date", "-created_at")
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["can_edit_tasks"] = user_has_role(self.request.user, ROLE_MANAGER)
+        return context
+
 
 class MyTaskListView(LoginRequiredMixin, ListView):
     model = WarehouseTask
@@ -28,6 +33,11 @@ class MyTaskListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return WarehouseTask.objects.select_related("assigned_to", "created_by").filter(assigned_to=self.request.user).order_by("due_date", "-created_at")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["can_edit_tasks"] = user_has_role(self.request.user, ROLE_MANAGER)
+        return context
 
 
 class TaskCreateView(LoginRequiredMixin, RoleRequiredMixin, ModelFormTitleMixin, CreateView):
@@ -45,6 +55,19 @@ class TaskCreateView(LoginRequiredMixin, RoleRequiredMixin, ModelFormTitleMixin,
         return response
 
 
+class TaskUpdateView(LoginRequiredMixin, RoleRequiredMixin, ModelFormTitleMixin, UpdateView):
+    allowed_roles = (ROLE_MANAGER,)
+    model = WarehouseTask
+    form_class = WarehouseTaskForm
+    template_name = "generic/form.html"
+    success_url = reverse_lazy("task-list")
+    form_title = "редактирование задачи"
+
+    def form_valid(self, form):
+        messages.success(self.request, "Задача обновлена.")
+        return super().form_valid(form)
+
+
 class TaskDetailView(LoginRequiredMixin, DetailView):
     model = WarehouseTask
     template_name = "tasks/task_detail.html"
@@ -59,6 +82,7 @@ class TaskDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["status_form"] = kwargs.get("status_form", WarehouseTaskStatusForm(initial={"status": self.object.status, "comment": self.object.comment}))
+        context["can_edit_task"] = user_has_role(self.request.user, ROLE_MANAGER)
         return context
 
     def post(self, request, *args, **kwargs):
