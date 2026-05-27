@@ -1,16 +1,16 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
-from django.views.generic import ListView
+from django.urls import reverse_lazy
+from django.views.generic import ListView, UpdateView
 
-from app.accounts.constants import ROLE_MANAGER
-from app.accounts.mixins import RoleRequiredMixin
+from app.accounts.mixins import MANAGEMENT_ROLES, ModelFormTitleMixin, RoleRequiredMixin
 from app.warehouse.forms import StockFilterForm, WarehouseLocationForm
 from app.warehouse.models import Stock, WarehouseLocation
 
 
 class WarehouseLocationListCreateView(LoginRequiredMixin, RoleRequiredMixin, ListView):
-    allowed_roles = (ROLE_MANAGER,)
+    allowed_roles = MANAGEMENT_ROLES
     model = WarehouseLocation
     template_name = "warehouse/location_list.html"
     context_object_name = "locations"
@@ -28,6 +28,19 @@ class WarehouseLocationListCreateView(LoginRequiredMixin, RoleRequiredMixin, Lis
             return redirect("location-list")
         self.object_list = self.get_queryset()
         return self.render_to_response(self.get_context_data(form=form))
+
+
+class WarehouseLocationUpdateView(LoginRequiredMixin, RoleRequiredMixin, ModelFormTitleMixin, UpdateView):
+    allowed_roles = MANAGEMENT_ROLES
+    model = WarehouseLocation
+    form_class = WarehouseLocationForm
+    template_name = "generic/form.html"
+    success_url = reverse_lazy("location-list")
+    form_title = "редактирование складской зоны"
+
+    def form_valid(self, form):
+        messages.success(self.request, "Складская зона обновлена.")
+        return super().form_valid(form)
 
 
 class StockListView(LoginRequiredMixin, ListView):

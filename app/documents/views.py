@@ -3,10 +3,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DetailView, ListView
+from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
-from app.accounts.constants import ROLE_MANAGER, ROLE_WAREHOUSE_WORKER
-from app.accounts.mixins import ModelFormTitleMixin, RoleRequiredMixin
+from app.accounts.constants import ROLE_WAREHOUSE_WORKER
+from app.accounts.mixins import MANAGEMENT_ROLES, ModelFormTitleMixin, RoleRequiredMixin
 from app.documents.forms import (
     ClientForm,
     ReceiptFilterForm,
@@ -26,7 +26,7 @@ from app.warehouse.services import move_stock
 
 
 class SupplierListCreateView(LoginRequiredMixin, RoleRequiredMixin, ListView):
-    allowed_roles = (ROLE_MANAGER,)
+    allowed_roles = MANAGEMENT_ROLES
     model = Supplier
     template_name = "documents/supplier_list.html"
     context_object_name = "suppliers"
@@ -46,8 +46,21 @@ class SupplierListCreateView(LoginRequiredMixin, RoleRequiredMixin, ListView):
         return self.render_to_response(self.get_context_data(form=form))
 
 
+class SupplierUpdateView(LoginRequiredMixin, RoleRequiredMixin, ModelFormTitleMixin, UpdateView):
+    allowed_roles = MANAGEMENT_ROLES
+    model = Supplier
+    form_class = SupplierForm
+    template_name = "generic/form.html"
+    success_url = reverse_lazy("supplier-list")
+    form_title = "редактирование поставщика"
+
+    def form_valid(self, form):
+        messages.success(self.request, "Поставщик обновлен.")
+        return super().form_valid(form)
+
+
 class ClientListCreateView(LoginRequiredMixin, RoleRequiredMixin, ListView):
-    allowed_roles = (ROLE_MANAGER,)
+    allowed_roles = MANAGEMENT_ROLES
     model = Client
     template_name = "documents/client_list.html"
     context_object_name = "clients"
@@ -65,6 +78,19 @@ class ClientListCreateView(LoginRequiredMixin, RoleRequiredMixin, ListView):
             return redirect("client-list")
         self.object_list = self.get_queryset()
         return self.render_to_response(self.get_context_data(form=form))
+
+
+class ClientUpdateView(LoginRequiredMixin, RoleRequiredMixin, ModelFormTitleMixin, UpdateView):
+    allowed_roles = MANAGEMENT_ROLES
+    model = Client
+    form_class = ClientForm
+    template_name = "generic/form.html"
+    success_url = reverse_lazy("client-list")
+    form_title = "редактирование клиента"
+
+    def form_valid(self, form):
+        messages.success(self.request, "Клиент обновлен.")
+        return super().form_valid(form)
 
 
 class ReceiptListView(LoginRequiredMixin, ListView):
@@ -100,7 +126,7 @@ class ReceiptDetailView(LoginRequiredMixin, DetailView):
 
 
 class ReceiptCreateView(LoginRequiredMixin, RoleRequiredMixin, CreateView):
-    allowed_roles = (ROLE_MANAGER, ROLE_WAREHOUSE_WORKER)
+    allowed_roles = MANAGEMENT_ROLES + (ROLE_WAREHOUSE_WORKER,)
     model = Receipt
     form_class = ReceiptForm
     template_name = "documents/receipt_form.html"
@@ -160,7 +186,7 @@ class ShipmentDetailView(LoginRequiredMixin, DetailView):
 
 
 class ShipmentCreateView(LoginRequiredMixin, RoleRequiredMixin, CreateView):
-    allowed_roles = (ROLE_MANAGER, ROLE_WAREHOUSE_WORKER)
+    allowed_roles = MANAGEMENT_ROLES + (ROLE_WAREHOUSE_WORKER,)
     model = Shipment
     form_class = ShipmentForm
     template_name = "documents/shipment_form.html"
@@ -199,7 +225,7 @@ class MovementListView(LoginRequiredMixin, ListView):
 
 
 class MovementCreateView(LoginRequiredMixin, RoleRequiredMixin, ModelFormTitleMixin, CreateView):
-    allowed_roles = (ROLE_MANAGER, ROLE_WAREHOUSE_WORKER)
+    allowed_roles = MANAGEMENT_ROLES + (ROLE_WAREHOUSE_WORKER,)
     model = StockMovement
     form_class = StockMovementForm
     template_name = "generic/form.html"
@@ -230,7 +256,7 @@ class WriteOffListView(LoginRequiredMixin, ListView):
 
 
 class WriteOffCreateView(LoginRequiredMixin, RoleRequiredMixin, ModelFormTitleMixin, CreateView):
-    allowed_roles = (ROLE_MANAGER, ROLE_WAREHOUSE_WORKER)
+    allowed_roles = MANAGEMENT_ROLES + (ROLE_WAREHOUSE_WORKER,)
     model = WriteOff
     form_class = WriteOffForm
     template_name = "generic/form.html"
