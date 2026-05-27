@@ -25,13 +25,35 @@ class RoleBasedNavigationTests(TestCase):
             with self.subTest(user=user.username):
                 self.client.force_login(user)
                 response = self.client.get(reverse("dashboard"))
+                self.assertContains(response, reverse("categories"))
+                self.assertContains(response, reverse("location-list"))
+                self.assertContains(response, reverse("supplier-list"))
+                self.assertContains(response, reverse("client-list"))
                 self.assertContains(response, reverse("task-list"))
                 self.assertContains(response, reverse("my-tasks"))
+                self.assertContains(response, reverse("staff-list"))
                 self.assertContains(response, reverse("reports-index"))
+                self.assertContains(response, reverse("operation-log-list"))
 
-    def test_worker_does_not_see_task_and_report_buttons(self):
+    def test_worker_sees_only_accessible_menu_buttons(self):
         self.client.force_login(self.worker)
         response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, reverse("product-list"))
+        self.assertContains(response, reverse("stock-list"))
+        self.assertContains(response, reverse("receipt-list"))
+        self.assertContains(response, reverse("shipment-list"))
+        self.assertContains(response, reverse("movement-list"))
+        self.assertContains(response, reverse("writeoff-list"))
+
+    def test_worker_does_not_see_restricted_menu_buttons(self):
+        self.client.force_login(self.worker)
+        response = self.client.get(reverse("dashboard"))
+        self.assertNotContains(response, reverse("categories"))
+        self.assertNotContains(response, reverse("location-list"))
+        self.assertNotContains(response, reverse("supplier-list"))
+        self.assertNotContains(response, reverse("client-list"))
         self.assertNotContains(response, reverse("task-list"))
         self.assertNotContains(response, reverse("my-tasks"))
+        self.assertNotContains(response, reverse("staff-list"))
         self.assertNotContains(response, reverse("reports-index"))
+        self.assertNotContains(response, reverse("operation-log-list"))
