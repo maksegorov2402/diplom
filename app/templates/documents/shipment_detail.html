@@ -2,5 +2,5 @@
 {% block content %}
 <h1 class="h3 mb-3">Отгрузка {{ shipment.shipment_number }}</h1>
 <div class="card mb-3"><div class="card-body"><p><strong>Дата:</strong> {{ shipment.shipment_date }}</p><p><strong>Клиент:</strong> {{ shipment.client }}</p><p><strong>Сотрудник:</strong> {{ shipment.user }}</p><p><strong>Статус:</strong> {{ shipment.get_status_display }}</p><p><strong>Комментарий:</strong> {{ shipment.comment|default:'—' }}</p></div></div>
-<table class="table table-striped bg-white"><thead><tr><th>Товар</th><th>Зона</th><th>Количество</th><th>Цена</th></tr></thead><tbody>{% for item in shipment.items.all %}<tr><td>{{ item.product }}</td><td>{{ item.location }}</td><td>{{ item.quantity }}</td><td>{{ item.sale_price }}</td></tr>{% endfor %}</tbody></table>
+<div class="table-responsive"><table class="table table-striped bg-white"><thead><tr><th>Товар</th><th>Зона</th><th>Количество</th><th>Цена</th></tr></thead><tbody>{% for item in shipment.items.all %}<tr><td>{{ item.product }}</td><td>{{ item.location }}</td><td>{{ item.quantity }}</td><td>{{ item.sale_price }}</td></tr>{% endfor %}</tbody></table></div>
 {% endblock %}

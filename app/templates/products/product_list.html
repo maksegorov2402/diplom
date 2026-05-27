@@ -2,6 +2,7 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-3"><h1 class="h3">Товары</h1><a class="btn btn-primary" href="{% url 'product-create' %}">Добавить</a></div>
 <form method="get" class="card card-body mb-3">{{ filter_form.as_p }}<div><button class="btn btn-outline-secondary">Фильтровать</button></div></form>
+<div class="table-responsive">
 <table class="table table-striped bg-white shadow-sm">
 <thead><tr><th>Название</th><th>Артикул</th><th>Категория</th><th>Цена</th><th>Мин. остаток</th><th>Статус</th><th></th></tr></thead>
 <tbody>
@@ -14,4 +15,5 @@
 <tr><td colspan="7" class="text-center">Товары не найдены.</td></tr>
 {% endfor %}
 </tbody></table>
+</div>
 {% endblock %}
