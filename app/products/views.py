@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
+from django.db.models.deletion import ProtectedError
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, UpdateView, View
@@ -169,7 +170,16 @@ class ProductDeleteView(LoginRequiredMixin, RoleRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         product = get_object_or_404(Product, pk=kwargs["pk"])
+
+        try:
+            product.delete()
+        except ProtectedError:
+            messages.error(
+                request,
+                "Невозможно удалить товар, потому что есть связанные списания. Сначала удалите или измените связанные записи.",
+            )
+            return redirect("product-list")
+
         log_operation(user=request.user, operation_type="product_deleted", entity=product, description=f"Удален товар {product}")
-        product.delete()
         messages.success(request, "Товар удален.")
         return redirect("product-list")
