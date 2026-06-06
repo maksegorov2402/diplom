@@ -2,6 +2,7 @@ from django import forms
 
 from app.config.forms import BootstrapForm, BootstrapModelForm
 from app.products.models import Category, Product
+from app.warehouse.models import WarehouseLocation
 
 
 class CategoryForm(BootstrapModelForm):
@@ -11,9 +12,21 @@ class CategoryForm(BootstrapModelForm):
 
 
 class ProductForm(BootstrapModelForm):
+    location = forms.ModelChoiceField(
+        queryset=WarehouseLocation.objects.all(),
+        label="Зона",
+        required=False
+    )
+
+    quantity = forms.DecimalField(
+        label="Количество",
+        min_value=0,        
+        required=False
+    )
+
     class Meta:
         model = Product
-        fields = ["name", "article", "category", "unit", "price", "min_quantity", "description", "is_active"]
+        fields = ["name", "article", "category", "unit", "price", "min_quantity", "description", "is_active", "location", "quantity"]
 
 
 class ProductFilterForm(BootstrapForm):
